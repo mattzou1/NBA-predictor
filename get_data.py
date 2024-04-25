@@ -1,28 +1,31 @@
-from nba_api.stats.endpoints import teamgamelog
-from nba_api.stats.static import teams
-import pandas as pd
-from nba_api.stats.library.parameters import SeasonAll
 import json
+import pandas as pd
+from nba_api.stats.static import teams
+from nba_api.stats.endpoints import teamgamelog
+from nba_api.stats.library.parameters import SeasonAll
 
-# Get a list of all team IDs and names
+#Get a divt og all teams
 teams_dict = teams.get_teams()
 
-# Create a dictionary mapping team IDs to team names
-team_id_to_name = {team['id']: team['full_name'] for team in teams_dict}
+#Create a dictionary mapping team IDs to team names
+team_id_to_name = {team['id']: team['nickname'] for team in teams_dict}
 
-# Print the dictionary
-print("Team ID to Name Mapping:")
+#Print the dictionary
+print("\nTeam ID to Name Mapping:")
+
+team_ids = []
+
+#print out all teams (for reference late) and create a list of all team IDs
 for team_id, team_name in team_id_to_name.items():
-    print(f"{team_id}: {team_name}")
+    print(f"    {team_id}: {team_name}")
+    team_ids.append(team_id)
 
-# Extract the team IDs into a list
-team_ids = list(team_id_to_name.keys())
 
-# Initialize empty DataFrames
+#Set up empty DataFrames
 df_teams_2023 = pd.DataFrame()
 df_teams_all = pd.DataFrame()
 
-# Loop through each team ID and get data
+# oop through each team and get data
 for team_id in team_ids:
     gamelog_teams = teamgamelog.TeamGameLog(team_id=team_id, season='2023')
     df_teams_2023 = pd.concat([df_teams_2023, pd.concat(gamelog_teams.get_data_frames())])
