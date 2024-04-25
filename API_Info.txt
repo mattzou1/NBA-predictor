@@ -1,0 +1,6 @@
+Documentation:
+https://pypi.org/project/nba_api/#description
+
+Endpoints:
+https://github.com/swar/nba_api/blob/master/docs/table_of_contents.md
+
