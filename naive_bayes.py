@@ -40,7 +40,7 @@ def process_Input():
     
         
 def get_Input(team1, team2, location):
-    with open('data/data/nba_averages.json', 'r') as f:
+    with open('data/nba_averages.json', 'r') as f:
         averages = json.load(f)
         
     input = []    
@@ -61,7 +61,7 @@ def get_Input(team1, team2, location):
 
 def prepareInput():
     # Load the training data
-    with open('data/data/nba_training_data.json', 'r') as f:
+    with open('data/nba_training_data.json', 'r') as f:
         data = json.load(f)
 
     # Initialize a list to store the training data
