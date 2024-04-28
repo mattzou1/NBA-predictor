@@ -3,12 +3,13 @@ import sys
 from nba_api.stats.static import teams
 import numpy as np
 
-def getInput():
+SEASON = "2023-24"
+
+def process_Input():
     def inputError():
         print(team_str)
         print("ERROR Invalid input")
-        print("Usage: python naive_bayes.py <team1 abbreviation> <team2 abbreviation>")
-        print("(input in all caps)")
+        print("Usage: python naive_bayes.py <team1 'Home' or 'Away'> <team1 abbreviation> <team2 abbreviation>")
         sys.exit()
     
     #Get a dict of all teams
@@ -19,20 +20,44 @@ def getInput():
     
     all_teams = set()
     team_str = "Abbreviation | Full Name\n"
+    
     #create a string to show abbeviations for each team and create a set of team abbreviations
     for team_name, team_abbr in sorted(team_id_to_name.items()):
         team_str += f"        {team_abbr}:   {team_name}\n"
         all_teams.add(team_abbr)
         
         
-    if(len(sys.argv) != 3): inputError()
-    team1 = sys.argv[1]
-    team2 = sys.argv[2]
-    if(team1 not in all_teams or team2 not in all_teams or team1 == team2): inputError()
+    if(len(sys.argv) != 4): inputError()
+    location = sys.argv[1]
+    team1 = sys.argv[2]
+    team2 = sys.argv[3]
+    if(team1 not in all_teams or team2 not in all_teams or team1 == team2 or (location != "Home" and location != "Away")): inputError()
+    
+    if(location == "Home"): location = 1
+    elif(location == "Away"): location = 0
         
+    return team1, team2, location
     
         
+def get_Input(team1, team2, location):
+    with open('data/data/nba_averages.json', 'r') as f:
+        averages = json.load(f)
         
+    input = []    
+ 
+        
+    team1_Averages = averages.get(team1, {}).get(SEASON)
+    for k, v in team1_Averages.items():
+        if k != 'point_dif' and isinstance(v, (int, float)):
+            input.append(round(v, 1))
+
+    team2_Averages = averages.get(team2, {}).get(SEASON)
+    for k, v in team2_Averages.items():
+        if k != 'point_dif' and isinstance(v, (int, float)):
+            input.append(round(v, 1))
+    input.append(location)
+    return np.array(input)
+
 
 def prepareInput():
     # Load the training data
@@ -59,8 +84,15 @@ def prepareInput():
     # Convert the list of training data and labels to a NumPy array
     training_data = np.array(training_data)
     labels = np.array(labels)
+    
+    print("Example general stats:")
+    print(training_data[0])
+    print(f"({len(training_data[0])}) long")
 
-    print(labels)
-    print(training_data)
+team1, team2, location = process_Input()
+input = get_Input(team1, team2, location)
 
-getInput()
+print(f"input stats:\n {input}")
+print(f"({len(input)}) long\n")
+
+prepareInput()
