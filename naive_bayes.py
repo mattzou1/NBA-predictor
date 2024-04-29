@@ -16,13 +16,13 @@ def process_Input():
     teams_dict = teams.get_teams()
 
     #dictionary mapping team names to team abbreviations
-    team_id_to_name = {team['full_name']: team['abbreviation'] for team in teams_dict}
+    team_name_to_abbr = {team['full_name']: team['abbreviation'] for team in teams_dict}
     
     all_teams = set()
     team_str = "Abbreviation | Full Name\n"
     
     #create a string to show abbeviations for each team and create a set of team abbreviations
-    for team_name, team_abbr in sorted(team_id_to_name.items()):
+    for team_name, team_abbr in sorted(team_name_to_abbr.items()):
         team_str += f"        {team_abbr}:   {team_name}\n"
         all_teams.add(team_abbr)
         
@@ -38,7 +38,6 @@ def process_Input():
         
     return team1, team2, location
     
-        
 def get_Input(team1, team2, location):
     with open('data/nba_averages.json', 'r') as f:
         averages = json.load(f)
@@ -58,41 +57,92 @@ def get_Input(team1, team2, location):
     input.append(location)
     return np.array(input)
 
-
-def prepareInput():
+def prepareTrainingData():
     # Load the training data
     with open('data/nba_training_data.json', 'r') as f:
         data = json.load(f)
 
-    # Initialize a list to store the training data
+    # Create a list of tuples with inputs and labels
     training_data = []
-    labels = []
-
-    # Iterate over the data
     for item in data:
-        # The inputs are every numerical value except for 'point_dif'
         inputs = []
         for k, v in item.items():
             if k != 'point_dif' and isinstance(v, (int, float)):
                 inputs.append(round(v, 1))
-        # The label is 'WL' or 'point_dif'
         label = item['WL']
-        # Add the inputs and label to arrays
-        training_data.append(inputs)
-        labels.append(label)
+        training_data.append((inputs, label))
 
-    # Convert the list of training data and labels to a NumPy array
-    training_data = np.array(training_data)
-    labels = np.array(labels)
-    
-    print("Example general stats:")
-    print(training_data[0])
-    print(f"({len(training_data[0])}) long")
+    # Convert the list of tuples to a NumPy structured array
+    training_data = np.array(training_data, dtype=[('inputs', float, len(training_data[0][0])), ('label', 'U2')])
+    return training_data
+
+def separate_by_class(dataset):
+    separated = {'W': [], 'L': []}
+    for instance in dataset:
+        if instance['label'] == 'W':
+            separated['W'].append(instance['inputs'])
+        else:
+            separated['L'].append(instance['inputs'])
+    return separated
+
+def calculate_statistics(data):
+    means = np.mean(data, axis=0)
+    stdevs = np.std(data, axis=0)
+    return means, stdevs
+
+def gaussian_probability_density(x, mean, std_dev):
+    exponent = -((x - mean) ** 2 / (2 * std_dev ** 2))
+    return (1 / (np.sqrt(2 * np.pi) * std_dev)) * np.exp(exponent)
+
+def find_W_Percent(input, training):
+    #Separate the training data by class
+    separated = separate_by_class(training)
+
+    #Calculate statistics for each class
+    statistics = {label: calculate_statistics(separated[label]) for label in separated}
+
+    #Calculate likelihoods for each class
+    likelihoods = {}
+    for label in ['W', 'L']:
+        means, stdevs = statistics[label]
+        likelihoods[label] = []
+
+        for i in range(len(input)):
+            probability = gaussian_probability_density(input[i], means[i], stdevs[i])
+            likelihoods[label].append(probability)
+
+
+    #Calculate probabilities
+    prob_win = .5
+    prob_loss = .5
+    for likelihood_win, likelihood_loss in zip(likelihoods['W'], likelihoods['L']):
+        prob_win *= likelihood_win
+        prob_loss *= likelihood_loss
+
+    #Prob loss and prob win are very very small numbers right here
+
+    #Normalize the probabilies
+    total = prob_win + prob_loss
+    return prob_win / total
+
+                
+                
 
 team1, team2, location = process_Input()
+#get the input data
 input = get_Input(team1, team2, location)
 
-print(f"input stats:\n {input}")
-print(f"({len(input)}) long\n")
+#get the training data
+training_data = prepareTrainingData()
 
-prepareInput()
+#Find the win probability
+win_prob = find_W_Percent(input, training_data)
+
+#Get a dict of all teams
+teams_dict = teams.get_teams()
+
+#dictionary mapping team abbreviations to team names
+team_abbr_to_name = {team['abbreviation']: team['full_name'] for team in teams_dict}
+
+#print result
+print(f"I predict there is a {win_prob*100:.2f}% chance that the {team_abbr_to_name[team1]} beat the {team_abbr_to_name[team2]}")
