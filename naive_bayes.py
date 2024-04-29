@@ -145,4 +145,6 @@ teams_dict = teams.get_teams()
 team_abbr_to_name = {team['abbreviation']: team['full_name'] for team in teams_dict}
 
 #print result
-print(f"I predict there is a {win_prob*100:.2f}% chance that the {team_abbr_to_name[team1]} beat the {team_abbr_to_name[team2]}")
+if(location == 1): location = "at a home game"
+else: location = "at an away game"
+print(f"I predict there is a {win_prob*100:.2f}% chance that the {team_abbr_to_name[team1]} beat the {team_abbr_to_name[team2]} {location}")
