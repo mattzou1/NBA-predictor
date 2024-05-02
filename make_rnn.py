@@ -24,7 +24,7 @@ class nbaRNN(nn.Module):
 
 def load_data_and_labels():
     # Load the training data
-    with open('data/nba_training_data.json', 'r') as f:
+    with open('data/nba_training_data2.json', 'r') as f:
         data = json.load(f)
 
     # Initialize a list to store the training data
@@ -49,7 +49,7 @@ def load_data_and_labels():
     labels = np.array(labels)
     return training_data, labels
 
-def train(model, training_data, labels, num_epochs=20, learning_rate=0.01, batch_size=32):
+def train(model, training_data, labels, num_epochs=20, learning_rate=0.0005, batch_size=32):
     torch.autograd.set_detect_anomaly(True)
     # Convert the training data and labels to PyTorch tensors
     training_data = torch.tensor(training_data, dtype=torch.float32)
@@ -102,7 +102,7 @@ def train(model, training_data, labels, num_epochs=20, learning_rate=0.01, batch
 
 training_data, labels = load_data_and_labels()
 n_features = len(training_data[0])  # Number of features in your data
-n_hidden = 128  # Number of hidden units
+n_hidden = 256  # Number of hidden units
 n_classes = 1  # Regression task (predicting 'point_dif')
 
 rnn = nbaRNN(n_features, n_hidden, n_classes)
@@ -110,5 +110,5 @@ rnn = train(rnn, training_data, labels)
 
 
 # Save the trained model
-torch.save(rnn.state_dict(), 'nba_rnn1.pth')
+torch.save(rnn.state_dict(), 'nba_rnn2.pth')
 print("Model saved!")
