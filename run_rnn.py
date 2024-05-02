@@ -59,6 +59,9 @@ def create_data(team1, team2, location):
     # Load the averages from the averages JSON file
     with open('data/nba_averages.json', 'r') as f:
         averages = json.load(f)
+        
+    with open('data/nba_training_data2.json', 'r') as f:
+        stats = json.load(f)
 
     # Initialize a list to store the training data
     input_data = {}
@@ -66,7 +69,16 @@ def create_data(team1, team2, location):
     team_averages = {f'team_average_{k}': v for k, v in averages.get(team1, {}).get(SEASON, {}).items()}
     opponent_averages = {f'opponent_average_{k}': v for k, v in averages.get(team2, {}).get(SEASON, {}).items()}
     
-    input_data = {**team_averages, **opponent_averages, 'home_game': location}
+    game = {}
+    for game in stats:
+        if(game['team'] == team1): break
+    
+    previous = {}
+    for k, v in game.items():
+        if('previous' in k):
+            previous[k] = v
+    
+    input_data = {**team_averages, **opponent_averages, **previous, 'home_game': location}
     
     # Initialize a list to store the training data
     input_arr = []
@@ -81,11 +93,12 @@ def create_data(team1, team2, location):
 
 team1, team2, location = process_Input()
 input_data = create_data(team1, team2, location)
+print(len(input_data))
 print(input_data)
         
 # Load the trained model
 n_features = len(input_data)  # Assuming you have access to training_data
-n_hidden = 128  # Same values as used during training
+n_hidden = 256  # Same values as used during training
 n_classes = 1
 model = nbaRNN(n_features, n_hidden, n_classes)
 model.load_state_dict(torch.load('nba_rnn1.pth'))
