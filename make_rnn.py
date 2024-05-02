@@ -49,7 +49,7 @@ def load_data_and_labels():
     labels = np.array(labels)
     return training_data, labels
 
-def train(model, training_data, labels, num_epochs=20, learning_rate=0.0005, batch_size=32):
+def train(model, training_data, labels, num_epochs=40, learning_rate=0.000005, batch_size=32):
     torch.autograd.set_detect_anomaly(True)
     # Convert the training data and labels to PyTorch tensors
     training_data = torch.tensor(training_data, dtype=torch.float32)
@@ -108,7 +108,8 @@ n_classes = 1  # Regression task (predicting 'point_dif')
 rnn = nbaRNN(n_features, n_hidden, n_classes)
 rnn = train(rnn, training_data, labels)
 
+file_name = 'nba_rnn2.pth'
 
 # Save the trained model
-torch.save(rnn.state_dict(), 'nba_rnn2.pth')
-print("Model saved!")
+torch.save(rnn.state_dict(), file_name)
+print("nba_rnn2.pth saved!")

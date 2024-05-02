@@ -3,6 +3,7 @@ import torch.nn as nn
 import json
 import sys
 from nba_api.stats.static import teams
+import os.path
 
 class nbaRNN(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
@@ -25,7 +26,7 @@ SEASON = "2023-24"
 def process_Input():
     def inputError():
         print(team_str)
-        print("Usage: python naive_bayes.py <team1 'Home' or 'Away'> <team1 abbreviation> <team2 abbreviation>")
+        print("Usage: python naive_bayes.py <trained_file>.pth <team1 'Home' or 'Away'> <team1 abbreviation> <team2 abbreviation>")
         sys.exit()
     
     #Get a dict of all teams
@@ -43,16 +44,20 @@ def process_Input():
         all_teams.add(team_abbr)
         
         
-    if(len(sys.argv) != 4): inputError()
-    location = sys.argv[1]
-    team1 = sys.argv[2]
-    team2 = sys.argv[3]
+    if(len(sys.argv) != 5): inputError()
+    file_name = sys.argv[1]
+    location = sys.argv[2]
+    team1 = sys.argv[3]
+    team2 = sys.argv[4]
     if(team1 not in all_teams or team2 not in all_teams or team1 == team2 or (location != "Home" and location != "Away")): inputError()
+    if(not os.path.isfile(file_name)):
+        print(f"'{file_name}' does not exist")
+        sys.exit()
     
     if(location == "Home"): location = 1
     elif(location == "Away"): location = 0
         
-    return team1, team2, location
+    return team1, team2, location, file_name
 
 def create_data(team1, team2, location):
     # Load the averages from the averages JSON file
@@ -90,7 +95,7 @@ def create_data(team1, team2, location):
 
 
 
-team1, team2, location = process_Input()
+team1, team2, location, fileName = process_Input()
 input_data = create_data(team1, team2, location)
         
 # Load the trained model
@@ -98,7 +103,7 @@ n_features = len(input_data)  # Assuming you have access to training_data
 n_hidden = 256  # Same values as used during training
 n_classes = 1
 model = nbaRNN(n_features, n_hidden, n_classes)
-model.load_state_dict(torch.load('nba_rnn1.pth'))
+model.load_state_dict(torch.load(fileName))
 model.eval()
 
 # Convert the input to a PyTorch tensor
