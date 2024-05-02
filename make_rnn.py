@@ -6,25 +6,21 @@ import torch.nn as nn
 import torch.optim as optim
 
 # Define the RNN model
-class SimpleRNN(nn.Module):
+class nbaRNN(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
-        super(SimpleRNN, self).__init__()
+        super(nbaRNN, self).__init__()
         self.hidden_size = hidden_size
-        self.i2h = nn.Linear(input_size + hidden_size, hidden_size)
-        self.i2o = nn.Linear(input_size + hidden_size, 1)
+        self.i2h = nn.Linear(input_size, hidden_size)
+        self.h2h = nn.Linear(hidden_size, hidden_size)
+        self.h2o = nn.Linear(hidden_size, output_size)
 
     def forward(self, input, hidden):
-        # Ensure hidden state has the same batch size as input
-        hidden = hidden.expand(input.size(0), -1)
-        combined = torch.cat((input, hidden), 1)
-        hidden = self.i2h(combined)
-        output = self.i2o(combined)
+        hidden = torch.tanh(self.i2h(input) + self.h2h(hidden))
+        output = self.h2o(hidden)
         return output, hidden
-
 
     def init_hidden(self):
         return torch.zeros(1, self.hidden_size)
-
 
 def load_data_and_labels():
     # Load the training data
@@ -53,55 +49,66 @@ def load_data_and_labels():
     labels = np.array(labels)
     return training_data, labels
 
+def train(model, training_data, labels, num_epochs=20, learning_rate=0.01, batch_size=32):
+    torch.autograd.set_detect_anomaly(True)
+    # Convert the training data and labels to PyTorch tensors
+    training_data = torch.tensor(training_data, dtype=torch.float32)
+    labels = torch.tensor(labels, dtype=torch.float32)
+
+    # Define the loss function and the optimizer
+    criterion = nn.MSELoss()
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+
+    # Split data into training and validation sets
+    val_split = 0.1  # 10% for validation
+    val_size = int(val_split * len(training_data))
+    X_train, X_val = training_data[:-val_size], training_data[-val_size:]
+    Y_train, Y_val = labels[:-val_size], labels[-val_size:]
+
+    print("Starting Training!")
+    # Training loop
+    for epoch in range(num_epochs):
+        epoch_loss = 0
+        for i in range(0, len(X_train), batch_size):
+            # Zero the gradients
+            optimizer.zero_grad()
+
+            # Get the current batch
+            batch_X_train = X_train[i:i+batch_size]
+            batch_Y_train = Y_train[i:i+batch_size]
+
+            # Forward pass
+            output, _ = rnn(batch_X_train, rnn.init_hidden())
+            loss = criterion(output, batch_Y_train.view(-1, 1))  # Reshape target to match input
+
+            # Backward pass and optimize
+            loss.backward()
+            optimizer.step()
+
+            # Accumulate loss for this epoch
+            epoch_loss += loss.item()
+
+        # Print the average loss for this epoch
+        print(f"Epoch [{epoch+1}/{num_epochs}], Average Loss: {epoch_loss / len(X_train)}")
+
+        # Validation: Evaluate on validation set
+        with torch.no_grad():
+            val_output, _ = rnn(X_val, rnn.init_hidden())
+            val_loss = criterion(val_output, Y_val.view(-1, 1))  # Reshape target to match input
+            print(f"Validation Loss: {val_loss.item()}")
+
+    return model
+
 
 training_data, labels = load_data_and_labels()
 n_features = len(training_data[0])  # Number of features in your data
-n_hidden = 64  # Number of hidden units
+n_hidden = 128  # Number of hidden units
 n_classes = 1  # Regression task (predicting 'point_dif')
 
-rnn = SimpleRNN(n_features, n_hidden, n_classes)
-
-# Define loss function and optimizer
-criterion = nn.MSELoss()
-optimizer = optim.Adam(rnn.parameters(), lr=0.001)
-
-# Split data into training and validation sets
-val_split = 0.1  # 10% for validation
-val_size = int(val_split * len(training_data))
-X_train, X_val = training_data[:-val_size], training_data[-val_size:]
-Y_train, Y_val = labels[:-val_size], labels[-val_size:]
+rnn = nbaRNN(n_features, n_hidden, n_classes)
+rnn = train(rnn, training_data, labels)
 
 
-
-# Training loop
-num_epochs = 20
-log_interval = 100
-batch_size = 32
-
-for epoch in range(num_epochs):
-    for batch_start in range(0, len(X_train), batch_size):
-        batch_end = batch_start + batch_size
-        batch_inputs = torch.tensor(X_train[batch_start:batch_end], dtype=torch.float32)
-        batch_labels = torch.tensor(Y_train[batch_start:batch_end], dtype=torch.float32)
-
-        optimizer.zero_grad()
-        batch_output, _ = rnn(batch_inputs, rnn.init_hidden())
-        batch_loss = criterion(batch_output, batch_labels)
-        batch_loss.backward()
-        optimizer.step()
-
-        if batch_start % log_interval == 0:
-            print(f"Epoch [{epoch+1}/{num_epochs}], Batch [{batch_start//batch_size+1}/{len(X_train)//batch_size}], Loss: {batch_loss.item()}")
-
-    # Validation: Evaluate on validation set
-    with torch.no_grad():
-        val_inputs = torch.tensor(X_val, dtype=torch.float32)
-        val_labels = torch.tensor(Y_val, dtype=torch.float32)
-        val_output, _ = rnn(val_inputs, rnn.init_hidden())
-        val_loss = criterion(val_output, val_labels)
-        print(f"Validation Loss: {val_loss.item()}")
-    
-
-# Save the trained model
-torch.save(rnn.state_dict(), 'nba_rnn1.pth')
-print("Model saved!")
+# # Save the trained model
+# torch.save(rnn.state_dict(), 'nba_rnn1.pth')
+# print("Model saved!")
