@@ -59,12 +59,16 @@ def get_Input(team1, team2, location):
 
 def prepareTrainingData():
     # Load the training data
-    with open('data/nba_training_data.json', 'r') as f:
+    with open('data/nba_training_data2.json', 'r') as f:
         data = json.load(f)
 
     # Create a list of tuples with inputs and labels
     training_data = []
+    normal_length = len(data[0])
+    print(normal_length)
     for item in data:
+        if len(item) != normal_length:
+            print(f"{item['team']} {item['opponent']} {item['season']} {len(item)}")
         inputs = []
         for k, v in item.items():
             if k != 'point_dif' and isinstance(v, (int, float)):
