@@ -49,7 +49,7 @@ def load_data_and_labels():
     labels = np.array(labels)
     return training_data, labels
 
-def train(model, training_data, labels, num_epochs=60, learning_rate=0.0000035, batch_size=32):
+def train(model, training_data, labels, num_epochs=80, learning_rate=0.0000035, batch_size=32):
     torch.autograd.set_detect_anomaly(True)
     # Convert the training data and labels to PyTorch tensors
     training_data = torch.tensor(training_data, dtype=torch.float32)
