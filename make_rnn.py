@@ -78,7 +78,7 @@ def train(model, training_data, labels, num_epochs=20, learning_rate=0.01, batch
             batch_Y_train = Y_train[i:i+batch_size]
 
             # Forward pass
-            output, _ = rnn(batch_X_train, rnn.init_hidden())
+            output, _ = model(batch_X_train, model.init_hidden())
             loss = criterion(output, batch_Y_train.view(-1, 1))  # Reshape target to match input
 
             # Backward pass and optimize
@@ -93,7 +93,7 @@ def train(model, training_data, labels, num_epochs=20, learning_rate=0.01, batch
 
         # Validation: Evaluate on validation set
         with torch.no_grad():
-            val_output, _ = rnn(X_val, rnn.init_hidden())
+            val_output, _ = model(X_val, model.init_hidden())  # Corrected line
             val_loss = criterion(val_output, Y_val.view(-1, 1))  # Reshape target to match input
             print(f"Validation Loss: {val_loss.item()}")
 
@@ -109,6 +109,6 @@ rnn = nbaRNN(n_features, n_hidden, n_classes)
 rnn = train(rnn, training_data, labels)
 
 
-# # Save the trained model
-# torch.save(rnn.state_dict(), 'nba_rnn1.pth')
-# print("Model saved!")
+# Save the trained model
+torch.save(rnn.state_dict(), 'nba_rnn1.pth')
+print("Model saved!")

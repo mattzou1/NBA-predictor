@@ -1,6 +1,24 @@
+import torch
+import torch.nn as nn
 import json
 import sys
 from nba_api.stats.static import teams
+
+class nbaRNN(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(nbaRNN, self).__init__()
+        self.hidden_size = hidden_size
+        self.i2h = nn.Linear(input_size, hidden_size)
+        self.h2h = nn.Linear(hidden_size, hidden_size)
+        self.h2o = nn.Linear(hidden_size, output_size)
+
+    def forward(self, input, hidden):
+        hidden = torch.tanh(self.i2h(input) + self.h2h(hidden))
+        output = self.h2o(hidden)
+        return output, hidden
+
+    def init_hidden(self):
+        return torch.zeros(1, self.hidden_size)
 
 SEASON = "2023-24"
 
@@ -48,13 +66,36 @@ def create_data(team1, team2, location):
     team_averages = {f'team_average_{k}': v for k, v in averages.get(team1, {}).get(SEASON, {}).items()}
     opponent_averages = {f'opponent_average_{k}': v for k, v in averages.get(team2, {}).get(SEASON, {}).items()}
     
-    input_data = {'team': team1, 'opponent': team2, 'season': SEASON, **team_averages, **opponent_averages, 
-            'home_game': location, 'WL': 'W'}
+    input_data = {**team_averages, **opponent_averages, 'home_game': location}
+    
+    # Initialize a list to store the training data
+    input_arr = []
 
-    # Write the training data to a new JSON file
-    with open(f'data/{team1}v{team2}.json', 'w') as f:
-        json.dump(input_data, f, indent=4)
-        
+
+    for k, v in input_data.items():
+        input_arr.append(v)
+
+    return input_arr
+
+
+
 team1, team2, location = process_Input()
+input_data = create_data(team1, team2, location)
+print(input_data)
+        
+# Load the trained model
+n_features = len(input_data)  # Assuming you have access to training_data
+n_hidden = 128  # Same values as used during training
+n_classes = 1
+model = nbaRNN(n_features, n_hidden, n_classes)
+model.load_state_dict(torch.load('nba_rnn1.pth'))
+model.eval()
 
-create_data(team1, team2, location)
+# Convert the input to a PyTorch tensor
+input_tensor = torch.tensor(input_data, dtype=torch.float32).unsqueeze(0)
+
+# Run the input through the model
+output, _ = model(input_tensor, model.init_hidden())
+
+# Print the predicted point difference
+print(f"Predicted point difference: {output.item()}")
