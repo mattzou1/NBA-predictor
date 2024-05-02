@@ -25,7 +25,6 @@ SEASON = "2023-24"
 def process_Input():
     def inputError():
         print(team_str)
-        print("ERROR Invalid input")
         print("Usage: python naive_bayes.py <team1 'Home' or 'Away'> <team1 abbreviation> <team2 abbreviation>")
         sys.exit()
     
@@ -93,8 +92,6 @@ def create_data(team1, team2, location):
 
 team1, team2, location = process_Input()
 input_data = create_data(team1, team2, location)
-print(len(input_data))
-print(input_data)
         
 # Load the trained model
 n_features = len(input_data)  # Assuming you have access to training_data
@@ -111,4 +108,6 @@ input_tensor = torch.tensor(input_data, dtype=torch.float32).unsqueeze(0)
 output, _ = model(input_tensor, model.init_hidden())
 
 # Print the predicted point difference
-print(f"Predicted point difference: {output.item()}")
+if(round(output.item(), 0) > 0): print(f"I predict {team1} will beat {team2} by {int (round(output.item(), 0))} points!")
+if(round(output.item(), 0) < 0): print(f"I predict {team2} will beat {team1} by {int (round(abs(output.item()), 0))} points!")
+if(round(output.item(), 0) == 0): print(f"I predict a TIE!")

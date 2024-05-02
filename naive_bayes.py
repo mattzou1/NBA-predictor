@@ -8,7 +8,6 @@ SEASON = "2023-24"
 def process_Input():
     def inputError():
         print(team_str)
-        print("ERROR Invalid input")
         print("Usage: python naive_bayes.py <team1 'Home' or 'Away'> <team1 abbreviation> <team2 abbreviation>")
         sys.exit()
     
