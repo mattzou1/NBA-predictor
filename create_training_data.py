@@ -26,7 +26,7 @@ with open('data/nba_averages.json', 'r') as f:
 # Initialize a list to store the training data
 training_data = []
 
-
+correct_length = 0
 
 # Iterate over the data
 for season_data in data:
@@ -62,9 +62,13 @@ for season_data in data:
         # Create a data point with the averages, the home game indicator, and the label
         data_point = {'team': team, 'opponent': opponent, 'season': season, **team_averages, **opponent_averages, **previous_games_data,
             'home_game': home_game, 'WL': winlose, 'point_dif': point_dif}
-
-        # Add the data point to the training data
-        training_data.append(data_point)
+        # Set the correct length as the length of the first data point
+        if i == 0:
+            correct_length = len(data_point)
+        
+        # Add the data point to the training data if it is the correct length
+        if len(data_point) == correct_length:
+            training_data.append(data_point)
 
 # Write the training data to a new JSON file
 with open('data/nba_training_data2.json', 'w') as f:
