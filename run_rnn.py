@@ -115,4 +115,7 @@ output, _ = model(input_tensor, model.init_hidden())
 # Print the predicted point difference
 if(round(output.item(), 0) > 0): print(f"I predict {team1} will beat {team2} by {int (round(output.item(), 0))} points!")
 if(round(output.item(), 0) < 0): print(f"I predict {team2} will beat {team1} by {int (round(abs(output.item()), 0))} points!")
-if(round(output.item(), 0) == 0): print(f"I predict a TIE!")
+if(round(output.item(), 0) == 0):
+    if(output.item() > 0): print(f"I predict {team1} will beat {team2} in a VERY close match")
+    if(output.item() < 0): print(f"I predict {team2} will beat {team1} in a VERY close match")
+    if(output.item() == 0): print(f"I predict a TIE")
