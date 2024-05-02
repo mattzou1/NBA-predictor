@@ -108,8 +108,8 @@ n_classes = 1  # Regression task (predicting 'point_dif')
 rnn = nbaRNN(n_features, n_hidden, n_classes)
 rnn = train(rnn, training_data, labels)
 
-file_name = 'nba_rnn2.pth'
+file_name = 'nba_rnn.pth'
 
 # Save the trained model
 torch.save(rnn.state_dict(), file_name)
-print("nba_rnn.pth saved!")
+print(f"{file_name} saved!")
