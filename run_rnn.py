@@ -1,6 +1,24 @@
+import torch
+import torch.nn as nn
 import json
 import sys
 from nba_api.stats.static import teams
+
+class nbaRNN(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(nbaRNN, self).__init__()
+        self.hidden_size = hidden_size
+        self.i2h = nn.Linear(input_size, hidden_size)
+        self.h2h = nn.Linear(hidden_size, hidden_size)
+        self.h2o = nn.Linear(hidden_size, output_size)
+
+    def forward(self, input, hidden):
+        hidden = torch.tanh(self.i2h(input) + self.h2h(hidden))
+        output = self.h2o(hidden)
+        return output, hidden
+
+    def init_hidden(self):
+        return torch.zeros(1, self.hidden_size)
 
 SEASON = "2023-24"
 
@@ -58,8 +76,26 @@ def create_data(team1, team2, location):
         input_arr.append(v)
 
     return input_arr
-        
-team1, team2, location = process_Input()
 
-input = create_data(team1, team2, location)
-print(input)
+
+
+team1, team2, location = process_Input()
+input_data = create_data(team1, team2, location)
+print(input_data)
+        
+# Load the trained model
+n_features = len(input_data)  # Assuming you have access to training_data
+n_hidden = 128  # Same values as used during training
+n_classes = 1
+model = nbaRNN(n_features, n_hidden, n_classes)
+model.load_state_dict(torch.load('nba_rnn1.pth'))
+model.eval()
+
+# Convert the input to a PyTorch tensor
+input_tensor = torch.tensor(input_data, dtype=torch.float32).unsqueeze(0)
+
+# Run the input through the model
+output, _ = model(input_tensor, model.init_hidden())
+
+# Print the predicted point difference
+print(f"Predicted point difference: {output.item()}")
