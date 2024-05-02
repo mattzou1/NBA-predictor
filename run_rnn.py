@@ -49,7 +49,7 @@ def create_data(team1, team2, location):
     opponent_averages = {f'opponent_average_{k}': v for k, v in averages.get(team2, {}).get(SEASON, {}).items()}
     
     input_data = {'team': team1, 'opponent': team2, 'season': SEASON, **team_averages, **opponent_averages, 
-            'home_game': location}
+            'home_game': location, 'WL': 'W'}
 
     # Write the training data to a new JSON file
     with open(f'data/{team1}v{team2}.json', 'w') as f:
