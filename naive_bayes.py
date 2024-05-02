@@ -59,7 +59,7 @@ def get_Input(team1, team2, location):
 
 def prepareTrainingData():
     # Load the training data
-    with open('data/nba_training_data2.json', 'r') as f:
+    with open('data/nba_training_data.json', 'r') as f:
         data = json.load(f)
 
     # Create a list of tuples with inputs and labels
