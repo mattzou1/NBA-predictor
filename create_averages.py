@@ -1,3 +1,10 @@
+"""
+Creates season averages for each team from nba_data.json and writes it into a nba_averages.json
+
+Authors: David Lybeck, Matthew Zou
+5/2/2024
+"""
+
 import json
 import math
 from collections import defaultdict

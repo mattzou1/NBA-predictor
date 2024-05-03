@@ -1,8 +1,19 @@
+"""
+Creates the training data for neural networks and naive bayes and writes it to nba_training_data.json. Training data includes 
+season averages for both teams, previous 3 game stats, home or away game, point differential, and win/lose. 
+
+Authors: David Lybeck, Matthew Zou
+5/2/2024
+"""
+
 import json
 import math
 from collections import defaultdict
 
 def get_previous_game(num, index):
+    """
+    Returns a dictionary that includes stats from num previous games ago
+    """
     # Fields to exclude
     exclude_fields = {'TEAM_ID', 'AVAILABLE_FLAG', 'VIDEO_AVAILABLE', 'BLKA', 'PFD', 'WL'}
     team_previous_game = {}

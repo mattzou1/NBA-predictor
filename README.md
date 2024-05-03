@@ -22,7 +22,7 @@ Clone the project
 
 Go to the project directory
 
-
+Unzip the data folder into the directory
 
 
 ```bash
@@ -47,6 +47,7 @@ python run_run.py <trained_file>.pth <team1 'Home' or 'Away'> <team1 abbreviatio
 ```
 
 ## Create data (optional)
+This will create all the data files in data.zip
 
 ### Create complete data Set
 

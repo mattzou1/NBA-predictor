@@ -1,13 +1,24 @@
+"""
+Creates and trains an RNN to predict point differential between two NBA teams. 
+
+Authors: David Lybeck, Matthew Zou
+5/2/2024
+"""
 import json
-import sys
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
 
-# Define the RNN model
 class nbaRNN(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
+        """
+        Initialize the RNN model.
+        
+        input_size (int): The number of input features.
+        hidden_size (int): The number of hidden units.
+        output_size (int): The number of output units.
+        """
         super(nbaRNN, self).__init__()
         self.hidden_size = hidden_size
         self.i2h = nn.Linear(input_size, hidden_size)
@@ -15,14 +26,37 @@ class nbaRNN(nn.Module):
         self.h2o = nn.Linear(hidden_size, output_size)
 
     def forward(self, input, hidden):
+        """
+        Define the forward pass of the RNN.
+        
+        input (Tensor): The input data.
+        hidden (Tensor): The hidden state.
+        
+        Returns:
+        output (Tensor): The output data.
+        hidden (Tensor): The new hidden state.
+        """
         hidden = torch.tanh(self.i2h(input) + self.h2h(hidden))
         output = self.h2o(hidden)
         return output, hidden
 
     def init_hidden(self):
+        """
+        Initialize the hidden state.
+        
+        Returns:
+        Tensor: The initial hidden state.
+        """
         return torch.zeros(1, self.hidden_size)
 
 def load_data_and_labels():
+    """
+    Load the training data and labels.
+    
+    Returns:
+    training_data (np.array): The training data.
+    labels (np.array): The labels.
+    """
     # Load the training data
     with open('data/nba_training_data.json', 'r') as f:
         data = json.load(f)
@@ -50,6 +84,19 @@ def load_data_and_labels():
     return training_data, labels
 
 def train(model, training_data, labels, num_epochs=400, learning_rate=0.0000035, batch_size=32):
+    """
+    Train the model.
+    
+    model (nn.Module): The model to train.
+    training_data (np.array): The training data.
+    labels (np.array): The labels.
+    num_epochs (int, optional): The number of epochs to train for. Default is 400.
+    learning_rate (float, optional): The learning rate. Default is 0.0000035.
+    batch_size (int, optional): The batch size. Default is 32.
+    
+    Returns:
+    model (nn.Module): The trained model.
+    """
     torch.autograd.set_detect_anomaly(True)
     # Convert the training data and labels to PyTorch tensors
     training_data = torch.tensor(training_data, dtype=torch.float32)
@@ -93,11 +140,12 @@ def train(model, training_data, labels, num_epochs=400, learning_rate=0.0000035,
 
         # Validation: Evaluate on validation set
         with torch.no_grad():
-            val_output, _ = model(X_val, model.init_hidden())  # Corrected line
+            val_output, _ = model(X_val, model.init_hidden()) 
             val_loss = criterion(val_output, Y_val.view(-1, 1))  # Reshape target to match input
             print(f"Validation Loss: {val_loss.item()}")
 
     return model
+
 
 
 training_data, labels = load_data_and_labels()
