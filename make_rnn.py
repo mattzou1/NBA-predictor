@@ -24,7 +24,7 @@ class nbaRNN(nn.Module):
 
 def load_data_and_labels():
     # Load the training data
-    with open('data/nba_training_data2.json', 'r') as f:
+    with open('data/nba_training_data.json', 'r') as f:
         data = json.load(f)
 
     # Initialize a list to store the training data
@@ -111,5 +111,5 @@ rnn = train(rnn, training_data, labels)
 file_name = 'nba_rnn.pth'
 
 # Save the trained model
-torch.save(rnn.state_dict(), file_name)
+torch.save(rnn.state_dict(), "models/"+file_name)
 print(f"{file_name} saved!")

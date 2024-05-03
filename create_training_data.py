@@ -71,5 +71,5 @@ for season_data in data:
             training_data.append(data_point)
 
 # Write the training data to a new JSON file
-with open('data/nba_training_data2.json', 'w') as f:
+with open('data/nba_training_data.json', 'w') as f:
     json.dump(training_data, f, indent=4)

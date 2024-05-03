@@ -1,3 +1,10 @@
+"""
+Takes a .pth model and predicts the point differential and outcome of a given NBA game
+
+Authors: David Lybeck, Matthew Zou
+5/2/2024
+"""
+
 import torch
 import torch.nn as nn
 import json
@@ -24,7 +31,15 @@ class nbaRNN(nn.Module):
 SEASON = "2023-24"
 
 def process_Input():
+    """
+    Processes the input when the file is run to make sure everything is good to go
+
+    Returns: team1 name, team2 name, whether the game is Home or away for team 1, and the desired file name
+    """
     def inputError():
+        """
+        Error statement
+        """
         print(team_str)
         print("Usage: python naive_bayes.py <trained_file>.pth <team1 'Home' or 'Away'> <team1 abbreviation> <team2 abbreviation>")
         sys.exit()
@@ -50,8 +65,8 @@ def process_Input():
     team1 = sys.argv[3]
     team2 = sys.argv[4]
     if(team1 not in all_teams or team2 not in all_teams or team1 == team2 or (location != "Home" and location != "Away")): inputError()
-    if(not os.path.isfile(file_name)):
-        print(f"'{file_name}' does not exist")
+    if(not os.path.isfile("models/"+file_name)):
+        print(f"'{file_name}' does not exist in models")
         sys.exit()
     
     if(location == "Home"): location = 1
@@ -60,11 +75,16 @@ def process_Input():
     return team1, team2, location, file_name
 
 def create_data(team1, team2, location):
+    """
+    Creates a custom data set using the given teams to use as input for the neural network
+
+    Returns: input array
+    """
     # Load the averages from the averages JSON file
     with open('data/nba_averages.json', 'r') as f:
         averages = json.load(f)
         
-    with open('data/nba_training_data2.json', 'r') as f:
+    with open('data/nba_training_data.json', 'r') as f:
         stats = json.load(f)
 
     # Initialize a list to store the training data
@@ -103,7 +123,7 @@ n_features = len(input_data)  # Assuming you have access to training_data
 n_hidden = 256  # Same values as used during training
 n_classes = 1
 model = nbaRNN(n_features, n_hidden, n_classes)
-model.load_state_dict(torch.load(fileName))
+model.load_state_dict(torch.load("models/"+fileName))
 model.eval()
 
 # Convert the input to a PyTorch tensor

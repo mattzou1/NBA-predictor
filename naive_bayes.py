@@ -1,3 +1,11 @@
+"""
+This program uses naive bayes using gaussian probability density to predict
+the outcome of NBA games
+
+Authors: David Lybeck, Matthew Zou
+5/2/2024
+"""
+
 import json
 import sys
 from nba_api.stats.static import teams
@@ -6,7 +14,15 @@ import numpy as np
 SEASON = "2023-24"
 
 def process_Input():
+    """
+    Processes the input when the file is run to make sure everything is good to go
+
+    Returns: team1 name, team2 name and whether the game is Home or away for team 1
+    """
     def inputError():
+        """
+        Error statement
+        """
         print(team_str)
         print("Usage: python naive_bayes.py <team1 'Home' or 'Away'> <team1 abbreviation> <team2 abbreviation>")
         sys.exit()
@@ -38,11 +54,15 @@ def process_Input():
     return team1, team2, location
     
 def get_Input(team1, team2, location):
+    """
+    Gets the data for the given teams and creates an array of input data
+
+    Returns: Numpy array of input data
+    """
     with open('data/nba_averages.json', 'r') as f:
         averages = json.load(f)
         
     input = []    
- 
         
     team1_Averages = averages.get(team1, {}).get(SEASON)
     for k, v in team1_Averages.items():
@@ -57,6 +77,10 @@ def get_Input(team1, team2, location):
     return np.array(input)
 
 def prepareTrainingData():
+    """
+    Creates custom training data from the large data set
+    Returns: Numpy array of training data
+    """
     # Load the training data
     with open('data/nba_training_data.json', 'r') as f:
         data = json.load(f)
@@ -64,13 +88,12 @@ def prepareTrainingData():
     # Create a list of tuples with inputs and labels
     training_data = []
     normal_length = len(data[0])
-    print(normal_length)
     for item in data:
         if len(item) != normal_length:
             print(f"{item['team']} {item['opponent']} {item['season']} {len(item)}")
         inputs = []
         for k, v in item.items():
-            if k != 'point_dif' and isinstance(v, (int, float)):
+            if k != 'point_dif' and "previous" not in k and isinstance(v, (int, float)):
                 inputs.append(round(v, 1))
         label = item['WL']
         training_data.append((inputs, label))
@@ -79,9 +102,13 @@ def prepareTrainingData():
     training_data = np.array(training_data, dtype=[('inputs', float, len(training_data[0][0])), ('label', 'U2')])
     return training_data
 
-def separate_by_class(dataset):
+def separate_by_class(training_data):
+    """
+    Creates a Dict to separate training data by Wins and Losses 
+    Returns: Dict for wins and losses
+    """
     separated = {'W': [], 'L': []}
-    for instance in dataset:
+    for instance in training_data:
         if instance['label'] == 'W':
             separated['W'].append(instance['inputs'])
         else:
@@ -89,15 +116,27 @@ def separate_by_class(dataset):
     return separated
 
 def calculate_statistics(data):
+    """
+    Finds the mean and standard deviation of all the data in each dataset
+    Returns a numpy array of the means and a numpy array of the stdevs
+    """
     means = np.mean(data, axis=0)
     stdevs = np.std(data, axis=0)
     return means, stdevs
 
 def gaussian_probability_density(x, mean, std_dev):
+    """
+    Gaussian probability density fucntion
+    Returns: the Gaussian Probability Density
+    """
     exponent = -((x - mean) ** 2 / (2 * std_dev ** 2))
     return (1 / (np.sqrt(2 * np.pi) * std_dev)) * np.exp(exponent)
 
 def find_W_Percent(input, training):
+    """
+    Find the percent change of a win when given the input data and training data
+    Returns: The probability of a win
+    """
     #Separate the training data by class
     separated = separate_by_class(training)
 
@@ -127,9 +166,7 @@ def find_W_Percent(input, training):
     #Normalize the probabilies
     total = prob_win + prob_loss
     return prob_win / total
-
-                
-                
+            
 
 team1, team2, location = process_Input()
 #get the input data

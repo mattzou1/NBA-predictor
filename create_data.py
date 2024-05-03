@@ -1,3 +1,10 @@
+"""
+Using the nba_api create a large data set of all NBA stats by season and team
+
+Authors: David Lybeck, Matthew Zou
+5/2/2024
+"""
+
 from nba_api.stats.endpoints import teamgamelogs
 from nba_api.stats.static import teams
 import json
@@ -20,7 +27,7 @@ seasons = [
     '1951-52','1950-51','1949-50','1948-49','1947-48','1946-47'
 ]
 
-#Get a dict og all teams
+#Get a dict of all teams
 teams_dict = teams.get_teams()
 
 #dictionary mapping team IDs to team names
@@ -54,6 +61,6 @@ for season in seasons:
             print(f"    Error fetching data for the {team_id_to_name.get(team_id)} in season {season}: {e}")
 
 #Save the data as a JSON file
-with open('NBA_Data.json', 'w') as file:
+with open('data/NBA_Data.json', 'w') as file:
     json_data = [row.to_dict('records') for row in data]
     json.dump(json_data, file, indent=4)
