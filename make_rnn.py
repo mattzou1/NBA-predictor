@@ -42,14 +42,14 @@ def load_data_and_labels():
         label = item['point_dif']
         # Add the inputs and label to arrays
         training_data.append(inputs)
-        labels.append(label*3)
+        labels.append(label)
 
     # Convert the list of training data and labels to a NumPy array
     training_data = np.array(training_data)
     labels = np.array(labels)
     return training_data, labels
 
-def train(model, training_data, labels, num_epochs=180, learning_rate=0.0000035, batch_size=32):
+def train(model, training_data, labels, num_epochs=400, learning_rate=0.0000035, batch_size=32):
     torch.autograd.set_detect_anomaly(True)
     # Convert the training data and labels to PyTorch tensors
     training_data = torch.tensor(training_data, dtype=torch.float32)
