@@ -41,7 +41,7 @@ def process_Input():
         Error statement
         """
         print(team_str)
-        print("Usage: python naive_bayes.py <trained_file>.pth <team1 'Home' or 'Away'> <team1 abbreviation> <team2 abbreviation>")
+        print("Usage: python run_rnn.py <trained_file>.pth <team1 'Home' or 'Away'> <team1 abbreviation> <team2 abbreviation>")
         sys.exit()
     
     #Get a dict of all teams

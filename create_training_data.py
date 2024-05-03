@@ -16,7 +16,7 @@ def get_previous_game(num, index):
     return team_previous_game
 
 # Load the data from the original JSON file
-with open('data/NBA_Data_Apr_25.json', 'r') as f:
+with open('data/nba_data.json', 'r') as f:
     data = json.load(f)
 
 # Load the averages from the averages JSON file

@@ -61,6 +61,6 @@ for season in seasons:
             print(f"    Error fetching data for the {team_id_to_name.get(team_id)} in season {season}: {e}")
 
 #Save the data as a JSON file
-with open('data/NBA_Data.json', 'w') as file:
+with open('data/nba_data.json', 'w') as file:
     json_data = [row.to_dict('records') for row in data]
     json.dump(json_data, file, indent=4)

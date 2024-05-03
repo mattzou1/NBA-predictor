@@ -3,7 +3,7 @@ import math
 from collections import defaultdict
 
 # Load the data from the JSON file
-with open('data/NBA_Data_Apr_25.json', 'r') as f:
+with open('data/nba_data.json', 'r') as f:
     data = json.load(f)
 
 # Initialize a dictionary to store the sum of stats for each team for each season
