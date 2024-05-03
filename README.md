@@ -55,7 +55,7 @@ python run_run.py <trained_file>.pth <team1 'Home' or 'Away'> <team1 abbreviatio
 python run_tf_run.py <trained_file>.h5 <team1 'Home' or 'Away'> <team1 abbreviation> <team2 abbreviation>
 ```
 
-### List of team abbreviations to team names for reference
+## List of team abbreviations to team names for reference:
 ##### ATL:   Atlanta Hawks
 ##### BOS:   Boston Celtics
 ##### BKN:   Brooklyn Nets
