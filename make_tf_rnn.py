@@ -51,7 +51,7 @@ def train_model(model, training_data, labels):
     model.compile(loss='mean_squared_error', optimizer='adam')
 
     # Train the model
-    model.fit(training_data, labels, epochs=50, batch_size=32)
+    model.fit(training_data, labels, epochs=200, batch_size=32)
 
 # Load the data and labels
 training_data, labels = load_data_and_labels()

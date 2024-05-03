@@ -30,10 +30,14 @@ Unzip the data folder into the directory
 ```
 
 [Install pytorch](https://pytorch.org/get-started/locally/)
-#### If you want to update data or train new RNN:
+#### If you want to update data or train a new RNN:
 
 ```bash
   pip install nba_api
+```
+
+```bash
+  pip install tensorflow
 ```
 
 ## Run Naive Bayes
@@ -46,8 +50,13 @@ python naive_bayes.py <team1 'Home' or 'Away'> <team1 abbreviation> <team2 abbre
 python run_run.py <trained_file>.pth <team1 'Home' or 'Away'> <team1 abbreviation> <team2 abbreviation>
 ```
 
+## Run Using Tensorflow
+```bash
+python run_tf_run.py <trained_file>.h5 <team1 'Home' or 'Away'> <team1 abbreviation> <team2 abbreviation>
+```
+
 ## Create data (optional)
-This will create all the data files in data.zip
+This will create all the data files currently inside data.zip
 
 ### Create complete data Set
 
@@ -65,4 +74,16 @@ python create_averages.py
 
 ```bash
 python create_training_data.py
+```
+
+## Create RNN (optional)
+
+### Pytorch
+```bash
+python make_rnn.py
+```
+
+### Tensorflow
+```bash
+python make_tf_rnn.py
 ```
