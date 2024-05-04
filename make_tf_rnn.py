@@ -1,3 +1,9 @@
+"""
+Creates and trains an RNN using Tensorflow to predict point differential between two NBA teams. 
+
+Authors: David Lybeck, Matthew Zou
+5/2/2024
+"""
 import json
 import numpy as np
 import tensorflow as tf
@@ -6,6 +12,13 @@ from keras.models import Sequential
 from keras.layers import Dense, LSTM, Dropout, Input
 
 def load_data_and_labels():
+    """
+    Load the training data and labels.
+    
+    Returns:
+    training_data (np.array): The training data.
+    labels (np.array): The labels.
+    """
     # Load the training data
     with open('data/nba_training_data.json', 'r') as f:
         data = json.load(f)
@@ -33,6 +46,12 @@ def load_data_and_labels():
     return training_data, labels
 
 def build_model():
+    """
+    Builds the the structure of the RNN using LSTM units. 
+    
+    Returns:
+    model (tf model): The model.
+    """
     # Initialize the model
     model = Sequential()
     # Add an Input layer
@@ -47,11 +66,21 @@ def build_model():
     return model
 
 def train_model(model, training_data, labels):
+    """
+    Train the model.
+    
+    model (tf model): The model to train.
+    training_data (np.array): The training data.
+    labels (np.array): The labels.
+    
+    Returns:
+    model (tf model): The trained model.
+    """
     # Compile the model
     model.compile(loss='mean_squared_error', optimizer='adam')
 
     # Train the model
-    model.fit(training_data, labels, epochs=200, batch_size=32)
+    model.fit(training_data, labels, epochs=40, batch_size=32)
 
 # Load the data and labels
 training_data, labels = load_data_and_labels()

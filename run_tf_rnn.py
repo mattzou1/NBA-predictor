@@ -1,3 +1,10 @@
+"""
+Takes a .h5 tensorflow model and predicts the point differential and outcome of a given NBA game
+
+Authors: David Lybeck, Matthew Zou
+5/2/2024
+"""
+
 import json
 import sys
 import numpy as np

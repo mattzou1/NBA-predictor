@@ -1,5 +1,5 @@
 """
-Creates and trains an RNN to predict point differential between two NBA teams. 
+Creates and trains an RNN using Pytorch to predict point differential between two NBA teams. 
 
 Authors: David Lybeck, Matthew Zou
 5/2/2024
