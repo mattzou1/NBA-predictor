@@ -1,7 +1,11 @@
 
 # NBA Game Predictor
 
-This is an implementation of both a recurrent neural network to predict the outcome and point differential for NBA games, and naive bayes to predict the probability of a win for a given match
+This is an implementation of both a recurrent neural network to predict the outcome and point differential for NBA games, and naive bayes to predict the probability of a win for a given match.  
+We could not get our RNNs seem to heavily consider previous output when producing output. Our RNNs almost act like feed foward networks.   
+Our RNNs and our naive bayes programs seem to predict current NBA games' point differential and outcome to a good degree of accuracy     
+models/torch_DEMO: RNN created and trained using Pytorch using simple RNN cells.  
+models/tf_DEMO: RNN created and trained using tensorflow using LSTM Cells.  
 
 2 May 2024
 
@@ -22,12 +26,8 @@ Clone the project
 
 Go to the project directory
 
-Unzip the data folder into the directory
+Unzip the data folder into the directory. After this, you should have a data folder in the directory.
 
-
-```bash
-  pip install numpy
-```
 
 [Install pytorch](https://pytorch.org/get-started/locally/)
 #### If you want to update data or train a new RNN:
@@ -38,6 +38,10 @@ Unzip the data folder into the directory
 
 ```bash
   pip install tensorflow
+```
+
+```bash
+  pip install numpy
 ```
 
 ## Run Naive Bayes
