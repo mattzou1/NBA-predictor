@@ -53,7 +53,7 @@ python naive_bayes.py <team1 'Home' or 'Away'> <team1 abbreviation> <team2 abbre
 python naive_bayes.py Home DEN LAL
 ```
 
-## Run Using Pytorch
+## Run Pytorch Neural Network
 ```bash
 python run_run.py <trained_file>.pth <team1 'Home' or 'Away'> <team1 abbreviation> <team2 abbreviation>
 ```
@@ -62,7 +62,7 @@ python run_run.py <trained_file>.pth <team1 'Home' or 'Away'> <team1 abbreviatio
 python run_rnn.py torch_DEMO.pth Home DEN LAL
 ```
 
-## Run Using Tensorflow
+## Run Tensorflow Neural Network
 ```bash
 python run_tf_run.py <trained_file>.h5 <team1 'Home' or 'Away'> <team1 abbreviation> <team2 abbreviation>
 ```
