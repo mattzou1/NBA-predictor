@@ -48,15 +48,27 @@ Unzip the data folder into the directory. After this, you should have a data fol
 ```bash
 python naive_bayes.py <team1 'Home' or 'Away'> <team1 abbreviation> <team2 abbreviation>"
 ```
+#### Example
+```bash
+python naive_bayes.py Home DEN LAL
+```
 
-## Run Using Pytorch
+## Run Pytorch Neural Network
 ```bash
 python run_run.py <trained_file>.pth <team1 'Home' or 'Away'> <team1 abbreviation> <team2 abbreviation>
 ```
+#### Example
+```bash
+python run_rnn.py torch_DEMO.pth Home DEN LAL
+```
 
-## Run Using Tensorflow
+## Run Tensorflow Neural Network
 ```bash
 python run_tf_run.py <trained_file>.h5 <team1 'Home' or 'Away'> <team1 abbreviation> <team2 abbreviation>
+```
+#### Example
+```bash
+python run_tf_rnn.py tf_DEMO.h5 Home DEN LAL
 ```
 
 ## List of team abbreviations to team names for reference:
