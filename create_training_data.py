@@ -39,6 +39,7 @@ training_data = []
 
 correct_length = -1
 
+oldSeason = ''
 # Iterate over the data
 for season_data in data:
     for i in range(len(season_data)):
@@ -49,6 +50,11 @@ for season_data in data:
         season = game_data['SEASON']
         winlose = game_data['WL']
         point_dif = game_data['PLUS_MINUS']
+        
+        # Print status
+        if(season != oldSeason):
+            oldSeason = season
+            print(f"    Parsing data for the {season} season")
 
         # Only consider the data from the 1985-86 season and later
         if int(season.split('-')[0]) < 1985:
@@ -82,5 +88,6 @@ for season_data in data:
             training_data.append(data_point)
 
 # Write the training data to a new JSON file
+print(" Saving...")
 with open('data/nba_training_data.json', 'w') as f:
     json.dump(training_data, f, indent=4)

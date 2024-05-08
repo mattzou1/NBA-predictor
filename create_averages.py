@@ -66,5 +66,6 @@ for team, seasons in team_stats.items():
         team_averages[team][season]['WIN_PCT'] = team_wins[team][season] / team_games[team][season]
 
 # Write the averages to a new JSON file
+print(" Saving")
 with open('data/nba_averages.json', 'w') as f:
     json.dump(team_averages, f, indent=4)

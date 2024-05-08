@@ -160,4 +160,4 @@ file_name = 'nba_rnn.pth'
 
 # Save the trained model
 torch.save(rnn.state_dict(), "models/"+file_name)
-print(f"{file_name} saved!")
+print(f"{file_name} saved in Models folder!")
