@@ -54,7 +54,7 @@ for season_data in data:
         # Print status
         if(season != oldSeason):
             oldSeason = season
-            print(f"    Parsing data for the {season} season")
+            print(f"    Parsing data for the {season} season", end='\r', flush=True)
 
         # Only consider the data from the 1985-86 season and later
         if int(season.split('-')[0]) < 1985:

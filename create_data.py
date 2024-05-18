@@ -45,7 +45,7 @@ data = []
 
 #Iterate over each season for team
 for season in seasons:
-    print(f"    Fetching data for the {season} season")
+    print(f"    Fetching data for the {season} season", end='\r', flush=True)
     for team_id in team_ids:
         try:
             team_gamelogs = teamgamelogs.TeamGameLogs(team_id_nullable=team_id, season_nullable=season)
