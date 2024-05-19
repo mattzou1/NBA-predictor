@@ -44,6 +44,18 @@ Unzip the data folder into the directory. After this, you should have a data fol
   pip install numpy
 ```
 
+
+## Run Pytorch Neural Network (Most User Friendly)
+```bash
+python predict.py <Home Team Abbreviation> <Away Team Abbreviation>
+```
+
+#### Example
+```bash
+python predict.py DEN LAL
+```
+
+
 ## Run Naive Bayes
 ```bash
 python naive_bayes.py <team1 'Home' or 'Away'> <team1 abbreviation> <team2 abbreviation>"
@@ -53,14 +65,6 @@ python naive_bayes.py <team1 'Home' or 'Away'> <team1 abbreviation> <team2 abbre
 python naive_bayes.py Home DEN LAL
 ```
 
-## Run Pytorch Neural Network
-```bash
-python run_run.py <trained_file>.pth <team1 'Home' or 'Away'> <team1 abbreviation> <team2 abbreviation>
-```
-#### Example
-```bash
-python run_rnn.py torch_DEMO.pth Home DEN LAL
-```
 
 ## Run Tensorflow Neural Network
 ```bash
@@ -70,6 +74,7 @@ python run_tf_run.py <trained_file>.h5 <team1 'Home' or 'Away'> <team1 abbreviat
 ```bash
 python run_tf_rnn.py tf_DEMO.h5 Home DEN LAL
 ```
+
 
 ## List of team abbreviations to team names for reference:
 ##### ATL:   Atlanta Hawks
@@ -124,6 +129,7 @@ python create_averages.py
 python create_training_data.py
 ```
 
+
 ## Create RNN (optional)
 
 ### Pytorch
@@ -135,3 +141,10 @@ python make_rnn.py
 ```bash
 python make_tf_rnn.py
 ```
+
+## Update RNN (pytorch version only)
+```bash
+python update_data.py
+```
+
+This command will update all the data to be as current as possible, retrain the pytorch RNN, and create a file 'results.json' that contains all of the possible matches and predicted outcomes for the model.
