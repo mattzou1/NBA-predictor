@@ -53,5 +53,5 @@ print(" Predicitng all matches")
 outcomes = findOutcomes(matches)
 
 print("Saving...")
-with open('results.json', 'w') as f:
+with open('data/results.json', 'w') as f:
     json.dump(outcomes, f, indent=4)
